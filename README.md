@@ -1,16 +1,39 @@
 # Gokite Bot by Rendy
 
-Deskripsi singkat mengenai proyek ini. Jelaskan tujuan dan manfaat dari proyek ini.
+Gokite Bot adalah proyek yang bertujuan untuk memudahkan dalam pengerjaan tesnet Gokite.
 
-## Instalasi
+## 🚀 Fitur Utama
+- Otomatis melakukan chat pada tesnet Gokite
 
-Ikuti langkah-langkah di bawah ini untuk menjalankan proyek secara lokal:
+## 📌 Instalasi
 
-1. **Clone Repository**  
-   Pertama, clone repository menggunakan perintah berikut:
-   git clone https://github.com/mrscriptword/gokitebot_byrendy.git
-   cd yuhu
-   npm install
-   masukin addres di wallet.txt
-   optional proxy make atau gak make
-   jalankan -> node index.js
+Ikuti langkah-langkah berikut untuk menjalankan proyek ini secara lokal:
+
+### 1️⃣ Clone Repository
+```sh
+git clone https://github.com/mrscriptword/gokitebot_byrendy.git
+cd gokitebot_byrendy
+```
+
+### 2️⃣ Instal Dependensi
+Pastikan kamu berada di direktori proyek, lalu jalankan:
+```sh
+cd yuhu
+npm install
+```
+
+### 3️⃣ Konfigurasi Wallet
+Tambahkan address wallet ke dalam file `wallet.txt`.
+
+### 4️⃣ (Opsional) Konfigurasi Proxy
+Gunakan proxy jika diperlukan dengan mengedit file konfigurasi.
+
+### 5️⃣ Menjalankan Bot
+Jalankan bot dengan perintah berikut:
+```sh
+node index.js
+```
+
+---
+Jika ada pertanyaan atau masalah, jangan ragu untuk membuka issue di repository ini. 🚀
+
