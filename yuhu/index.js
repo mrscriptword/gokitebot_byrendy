@@ -77,46 +77,56 @@ function createAgent(proxy) {
         : new HttpsProxyAgent(proxyUrl);
 }
 
-// Daftar endpoint AI
+const getRandomQuestions = (questions, count) => {
+    let shuffled = questions.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+};
+
 const AI_ENDPOINTS = {
     "https://deployment-hp4y88pxnqxwlmpxllicjzzn.stag-vxzy.zettablock.com/main": {
         "agent_id": "deployment_hp4y88pxnqxwlmpxllicjzzn",
         "name": "Kite AI Assistant",
-        "questions": [
-            "Tell me about the latest updates in Kite AI",
-            "What are the upcoming features in Kite AI?",
-            "How can Kite AI improve my development workflow?",
-            "What makes Kite AI unique in the market?",
-            "How does Kite AI handle code completion?",
-            "Can you explain Kite AI's machine learning capabilities?",
-            "What programming languages does Kite AI support best?",
-            "How does Kite AI integrate with different IDEs?",
-            "What are the advanced features of Kite AI?",
-            "How can I optimize my use of Kite AI?"
-        ]
+        "questions": getRandomQuestions([
+            "Bagaimana cara memanfaatkan AI untuk menulis kode yang lebih efisien?",
+            "Apakah Kite AI bisa membantu dalam debugging otomatis?",
+            "Bagaimana cara menggunakan Kite AI untuk menulis dokumentasi kode secara otomatis?",
+            "Bagaimana cara meningkatkan akurasi prediksi kode dengan Kite AI?",
+            "Apakah Kite AI dapat digunakan untuk mengidentifikasi kode yang redundan?",
+            "Bagaimana cara melakukan analisis performa kode menggunakan Kite AI?",
+            "Apakah Kite AI dapat memberikan saran optimasi berdasarkan pola coding saya?"
+        ], 7)
     },
     "https://deployment-nc3y3k7zy6gekszmcsordhu7.stag-vxzy.zettablock.com/main": {
         "agent_id": "deployment_nc3y3k7zy6gekszmcsordhu7",
         "name": "Crypto Price Assistant",
-        "questions": [
-            "What's the current market sentiment for Solana?",
-            "Analyze Bitcoin's price movement in the last hour",
-            "Compare ETH and BTC performance today",
-            "Which altcoins are showing bullish patterns?",
-            "Market analysis for top 10 cryptocurrencies",
-            "Technical analysis for Polkadot",
-            "Price movement patterns for Avalanche",
-            "Polygon's market performance analysis",
-            "Latest developments affecting BNB price",
-            "Cardano's market outlook"
-        ]
+        "questions": getRandomQuestions([
+            "Bagaimana cara menggunakan AI untuk memprediksi harga kripto?",
+            "Apa saja faktor utama yang dapat menyebabkan volatilitas harga Bitcoin?",
+            "Bagaimana cara menentukan waktu terbaik untuk membeli dan menjual kripto?",
+            "Bagaimana korelasi antara pasar saham dan harga kripto?",
+            "Apakah ada indikator teknikal terbaik untuk trading harian kripto?",
+            "Bagaimana cara menghindari FOMO dalam trading mata uang kripto?",
+            "Apa perbedaan utama antara analisis teknikal dan fundamental dalam trading kripto?"
+        ], 7)
     },
     "https://deployment-sofftlsf9z4fya3qchykaanq.stag-vxzy.zettablock.com/main": {
         "agent_id": "deployment_SoFftlsf9z4fyA3QCHYkaANq",
         "name": "Transaction Analyzer",
-        "questions": []
+        "questions": getRandomQuestions([
+            "Bagaimana cara mendeteksi transaksi yang mencurigakan di blockchain?",
+            "Apa saja teknik terbaik untuk melacak transaksi dalam jaringan DeFi?",
+            "Bagaimana cara menentukan apakah sebuah transaksi terkait dengan aktivitas ilegal?",
+            "Bagaimana cara menggunakan blockchain explorer untuk memverifikasi transaksi?",
+            "Apakah mungkin untuk membatalkan transaksi yang sudah dikonfirmasi di blockchain?",
+            "Bagaimana cara mengetahui apakah dompet tertentu termasuk dalam kategori whale?",
+            "Bagaimana dampak transaksi besar terhadap likuiditas pasar?"
+        ], 7)
     }
 };
+
+
+console.log(AI_ENDPOINTS);
+
 
 // Kelas untuk menyimpan statistik wallet
 class WalletStatistics {
@@ -232,34 +242,6 @@ class KiteAIAutomation {
         return false;
     }
 
-    async getRecentTransactions() {
-        this.logMessage('🔍', 'Scanning recent transactions...', 'white');
-        const url = 'https://testnet.kitescan.ai/api/v2/advanced-filters';
-        const params = new URLSearchParams({
-            transaction_types: 'coin_transfer',
-            age: '5m'
-        });
-
-        try {
-            const agent = createAgent(this.getCurrentProxy());
-            const response = await fetch(`${url}?${params}`, {
-                agent,
-                headers: {
-                    'accept': '*/*',
-                    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-                }
-            });
-            const data = await response.json();
-            const hashes = data.items?.map(item => item.hash) || [];
-            this.logMessage('📊', `Found ${hashes.length} recent transactions`, 'magenta');
-            return hashes;
-        } catch (e) {
-            this.logMessage('❌', `Transaction fetch error: ${e}`, 'red');
-            this.rotateProxy();
-            return [];
-        }
-    }
-
     async sendAiQuery(endpoint, message) {
         const agent = createAgent(this.getCurrentProxy());
         const headers = {
@@ -369,10 +351,6 @@ class KiteAIAutomation {
                 this.logMessage('🔄', `Interaction #${interactionCount}`, 'magenta');
                 this.logMessage('📈', `Progress: ${this.session.dailyPoints + this.POINTS_PER_INTERACTION}/${this.MAX_DAILY_POINTS} points`, 'cyan');
                 this.logMessage('⏰', `Next Reset: ${this.session.nextResetTime.toISOString().replace('T', ' ').slice(0, 19)}`, 'cyan');
-
-                const transactions = await this.getRecentTransactions();
-                AI_ENDPOINTS["https://deployment-sofftlsf9z4fya3qchykaanq.stag-vxzy.zettablock.com/main"].questions = 
-                    transactions.map(tx => `Analyze this transaction in detail: ${tx}`);
 
                 const endpoints = Object.keys(AI_ENDPOINTS);
                 const endpoint = endpoints[Math.floor(Math.random() * endpoints.length)];
